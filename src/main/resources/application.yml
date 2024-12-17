@@ -1,2 +1,27 @@
 server:
   port: 9090
+
+spring:
+  datasource:
+    url: jdbc:sqlite:D:\linyu-mini.db #数据库文件路径（修改成实际路径）
+    driver-class-name: org.sqlite.JDBC
+    username:
+    password:
+  hikari:
+    minimum-idle: 3
+    maximum-pool-size: 10
+    max-lifetime: 30000
+    connection-init-sql: PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA shared_cache=ON;
+
+mybatis:
+  table:
+    auto: update
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+linyu:
+  password: sun55@kong #群聊密码
+  limit: 100 #在线人数限制
+  name: Linyu在线聊天室 #群聊名称
