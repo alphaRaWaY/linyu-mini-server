@@ -28,6 +28,9 @@ public class DatabaseInitializer {
             String dbFilePath;
             if (datasourceUrl.startsWith("jdbc:sqlite:")) {
                 dbFilePath = datasourceUrl.substring("jdbc:sqlite:".length());
+                if (dbFilePath.contains("?")) {
+                    dbFilePath = dbFilePath.substring(0, dbFilePath.indexOf("?"));
+                }
             } else {
                 throw new IllegalArgumentException("Invalid SQLite URL: " + datasourceUrl);
             }

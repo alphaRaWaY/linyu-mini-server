@@ -3,14 +3,20 @@ package com.cershy.linyuminiserver.service.impl;
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cershy.linyuminiserver.dto.UserDto;
 import com.cershy.linyuminiserver.entity.User;
 import com.cershy.linyuminiserver.mapper.UserMapper;
 import com.cershy.linyuminiserver.service.UserService;
 import com.cershy.linyuminiserver.vo.user.CreateUserVo;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+
+    @Resource
+    UserMapper userMapper;
 
     @Override
     public boolean isExist(String name, String email) {
@@ -36,5 +42,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setEmail(createUserVo.getEmail());
         save(user);
         return user;
+    }
+
+    @Override
+    public UserDto getUserById(String userId) {
+        return userMapper.getUserById(userId);
     }
 }
