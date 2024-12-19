@@ -54,7 +54,7 @@ public class LoginService {
         JSONObject userinfo = new JSONObject();
         userinfo.put("type", "user");
         userinfo.put("userId", user.getId());
-        userinfo.put("userName", user.getEmail());
+        userinfo.put("userName", user.getName());
         userinfo.put("token", JwtUtil.createToken(userinfo));
         return userinfo;
     }

@@ -11,6 +11,7 @@ import com.cershy.linyuminiserver.mapper.MessageMapper;
 import com.cershy.linyuminiserver.service.ChatListService;
 import com.cershy.linyuminiserver.service.MessageService;
 import com.cershy.linyuminiserver.service.UserService;
+import com.cershy.linyuminiserver.service.WebSocketService;
 import com.cershy.linyuminiserver.vo.message.RecordVo;
 import com.cershy.linyuminiserver.vo.message.SendMessageVo;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,9 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
 
     @Resource
     UserService userService;
+
+    @Resource
+    WebSocketService webSocketService;
 
     @Override
     public Message send(String userId, SendMessageVo sendMessageVo) {
@@ -51,6 +55,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
         Message message = sendMessage(userId, "1", sendMessageVo.getMsgContent(), MessageSource.Group, "text");
         //更新群聊列表
         chatListService.updateChatListGroup(message);
+        webSocketService.sendMsgToGroup(message);
         return message;
     }
 
@@ -58,7 +63,8 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
         Message message = sendMessage(userId, sendMessageVo.getTargetId(), sendMessageVo.getMsgContent(), MessageSource.Group, "text");
         //更新私聊列表
         chatListService.updateChatListPrivate(userId, sendMessageVo.getTargetId(), message);
-        return null;
+        webSocketService.sendMsgToUser(message, userId);
+        return message;
     }
 
     public Message sendMessage(String userId, String targetId, String msgContent, String source, String type) {
