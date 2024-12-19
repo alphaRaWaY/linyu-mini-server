@@ -12,6 +12,9 @@ spring:
     maximum-pool-size: 10
     max-lifetime: 30000
     connection-init-sql: PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA shared_cache=ON;
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss.SSS
+    time-zone: Asia/Shanghai
 
 mybatis:
   table:
