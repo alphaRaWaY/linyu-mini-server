@@ -1,3 +1,5 @@
+PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA shared_cache=ON;
+
 CREATE TABLE IF NOT EXISTS "user"
 (
     "id"          TEXT    NOT NULL,
@@ -36,3 +38,5 @@ CREATE TABLE IF NOT EXISTS "message"
     "update_time"  INTEGER NOT NULL,
     PRIMARY KEY ("id")
 );
+
+CREATE INDEX IF NOT EXISTS idx_message_from_id_to_id ON message (from_id, to_id);

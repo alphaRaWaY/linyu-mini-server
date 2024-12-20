@@ -23,7 +23,16 @@ public class DatabaseInitializer {
     private String datasourceUrl;
 
     @PostConstruct
-    public void initDatabase() {
+    public void init() {
+        if (datasourceUrl.startsWith("jdbc:mysql:")) {
+            executeSqlFromFile("linyu-mini-mysql.sql");
+        } else {
+            sqliteCreateDatabase();
+            executeSqlFromFile("linyu-mini-sqlite.sql");
+        }
+    }
+
+    public void sqliteCreateDatabase() {
         try {
             String dbFilePath;
             if (datasourceUrl.startsWith("jdbc:sqlite:")) {
@@ -43,8 +52,6 @@ public class DatabaseInitializer {
             } else {
                 System.out.println("Database file already exists. Skipping initialization.");
             }
-            // 加载并执行初始化 SQL 文件
-            executeSqlFromFile("linyu-mini.sql");
             System.out.println("Database initialized successfully.");
         } catch (Exception e) {
             throw new RuntimeException("Failed to initialize database", e);
@@ -52,7 +59,7 @@ public class DatabaseInitializer {
     }
 
     /**
-     * 从资源目录加载并执行 SQL 文件
+     * 执行 SQL 文件
      *
      * @param resourcePath 资源文件路径
      */

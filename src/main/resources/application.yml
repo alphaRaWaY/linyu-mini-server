@@ -1,20 +1,29 @@
 server:
-  port: 9090
+  port: 9200
 
 spring:
   datasource:
+    #sqlite
     url: jdbc:sqlite:D:\linyu-mini.db #数据库文件路径（修改成实际路径）
     driver-class-name: org.sqlite.JDBC
     username:
     password:
+  #mysql配置
+#      driver-class-name: com.mysql.cj.jdbc.Driver
+#      url: jdbc:mysql://127.0.0.1:3306/linyu-mini?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+#      username: root
+#      password: 123456
   hikari:
     minimum-idle: 3
     maximum-pool-size: 10
     max-lifetime: 30000
-    connection-init-sql: PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA shared_cache=ON;
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss.SSS
     time-zone: Asia/Shanghai
+
+logging:
+  file:
+    name: D:/logs/linyu-mini.log
 
 mybatis:
   table:
