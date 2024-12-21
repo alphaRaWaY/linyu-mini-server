@@ -64,8 +64,12 @@ public class WebSocketService {
         channel.writeAndFlush(new TextWebSocketFrame(JSONUtil.toJsonStr(wsContent)));
     }
 
-    public void sendMsgToUser(Object msg, String userId) {
+    public void sendMsgToUser(Object msg, String userId, String targetId) {
         Channel channel = Online_User.get(userId);
+        if (channel != null) {
+            sendMsg(channel, msg, WsContentType.Msg);
+        }
+        channel = Online_User.get(targetId);
         if (channel != null) {
             sendMsg(channel, msg, WsContentType.Msg);
         }

@@ -18,13 +18,11 @@ public interface MessageMapper extends BaseMapper<Message> {
 
 
     @Select("SELECT * " +
-            "FROM (SELECT * " +
             "      FROM `message` " +
             "      WHERE (`from_id` = #{userId} AND `to_id` = #{targetId}) " +
             "         OR (`from_id` = #{targetId} AND `to_id` = #{userId}) " +
             "         OR (`source` = 'group' AND `to_id` = #{targetId}) " +
-            "      ORDER BY `create_time` DESC LIMIT #{index}, #{num}) AS subquery " +
-            "ORDER BY `create_time` ASC")
+            "      ORDER BY `create_time` DESC LIMIT #{index}, #{num} ")
     @ResultMap("mybatis-plus_Message")
     List<Message> record(String userId, String targetId, int index, int num);
 }

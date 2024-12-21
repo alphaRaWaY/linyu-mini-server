@@ -29,8 +29,8 @@ public class User {
     /**
      * 头像
      */
-    @TableField("portrait")
-    private String portrait;
+    @TableField("avatar")
+    private String avatar;
 
     /**
      * 邮箱

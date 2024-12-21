@@ -12,6 +12,7 @@ import com.cershy.linyuminiserver.service.ChatListService;
 import com.cershy.linyuminiserver.service.MessageService;
 import com.cershy.linyuminiserver.service.UserService;
 import com.cershy.linyuminiserver.service.WebSocketService;
+import com.cershy.linyuminiserver.utils.IpUtil;
 import com.cershy.linyuminiserver.vo.message.RecordVo;
 import com.cershy.linyuminiserver.vo.message.SendMessageVo;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     }
 
     public Message sendMessageToGroup(String userId, SendMessageVo sendMessageVo) {
-        Message message = sendMessage(userId, "1", sendMessageVo.getMsgContent(), MessageSource.Group, "text");
+        Message message = sendMessage(userId, "1", sendMessageVo, MessageSource.Group, "text");
         //更新群聊列表
         chatListService.updateChatListGroup(message);
         webSocketService.sendMsgToGroup(message);
@@ -60,14 +61,14 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     }
 
     public Message sendMessageToUser(String userId, SendMessageVo sendMessageVo) {
-        Message message = sendMessage(userId, sendMessageVo.getTargetId(), sendMessageVo.getMsgContent(), MessageSource.Group, "text");
+        Message message = sendMessage(userId, sendMessageVo.getTargetId(), sendMessageVo, MessageSource.User, "text");
         //更新私聊列表
         chatListService.updateChatListPrivate(userId, sendMessageVo.getTargetId(), message);
-        webSocketService.sendMsgToUser(message, userId);
+        webSocketService.sendMsgToUser(message, userId, sendMessageVo.getTargetId());
         return message;
     }
 
-    public Message sendMessage(String userId, String targetId, String msgContent, String source, String type) {
+    public Message sendMessage(String userId, String targetId, SendMessageVo sendMessageVo, String source, String type) {
         //获取上一条显示时间的消息
         Message previousMessage = messageMapper.getPreviousShowTimeMsg(userId, targetId);
         //存入数据库
@@ -76,9 +77,10 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
         message.setFromId(userId);
         message.setSource(source);
         message.setToId(targetId);
-        message.setMessage(msgContent);
+        message.setMessage(sendMessageVo.getMsgContent());
         message.setType(type);
         UserDto user = userService.getUserById(userId);
+        user.setIpOwnership(IpUtil.getIpRegion(sendMessageVo.getUserIp()));
         message.setFromInfo(user);
         if (null == previousMessage) {
             message.setIsShowTime(true);

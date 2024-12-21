@@ -1,5 +1,6 @@
 package com.cershy.linyuminiserver.controller;
 
+import com.cershy.linyuminiserver.annotation.UserIp;
 import com.cershy.linyuminiserver.annotation.Userid;
 import com.cershy.linyuminiserver.entity.Message;
 import com.cershy.linyuminiserver.service.MessageService;
@@ -23,7 +24,9 @@ public class MessageController {
     MessageService messageService;
 
     @PostMapping("/send")
-    public Object send(@Userid String userId, @RequestBody @Valid SendMessageVo sendMessageVo) {
+    public Object send(@Userid String userId, @UserIp String userIp,
+                       @RequestBody @Valid SendMessageVo sendMessageVo) {
+        sendMessageVo.setUserIp(userIp);
         Message result = messageService.send(userId, sendMessageVo);
         return ResultUtil.Succeed(result);
     }

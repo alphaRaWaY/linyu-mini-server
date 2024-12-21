@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.cershy.linyuminiserver.dto.UserDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -13,7 +15,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("chat_list")
+@TableName(value = "chat_list", autoResultMap = true)
 public class ChatList {
     private static final long serialVersionUID = 1L;
 
@@ -36,6 +38,12 @@ public class ChatList {
     private String targetId;
 
     /**
+     * 目标用户信息
+     */
+    @TableField(value = "target_info", typeHandler = JacksonTypeHandler.class)
+    private UserDto targetInfo;
+
+    /**
      * 未读消息数
      */
     @TableField("unread_count")
@@ -44,8 +52,8 @@ public class ChatList {
     /**
      * 最后一条消息
      */
-    @TableField("last_message")
-    private String lastMessage;
+    @TableField(value = "last_message", typeHandler = JacksonTypeHandler.class)
+    private Message lastMessage;
 
     /**
      * 聊天类型

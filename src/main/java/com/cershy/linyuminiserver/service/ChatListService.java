@@ -9,7 +9,7 @@ import java.util.List;
 public interface ChatListService extends IService<ChatList> {
     List<ChatList> privateList(String userId);
 
-    ChatList getGroup();
+    ChatList getGroup(String userId);
 
     ChatList create(String userId, String targetId);
 

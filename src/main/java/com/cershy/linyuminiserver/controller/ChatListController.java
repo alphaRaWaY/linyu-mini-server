@@ -25,8 +25,8 @@ public class ChatListController {
     }
 
     @GetMapping("/group")
-    public Object group() {
-        ChatList result = chatListService.getGroup();
+    public Object group(@Userid String userId) {
+        ChatList result = chatListService.getGroup(userId);
         return ResultUtil.Succeed(result);
     }
 

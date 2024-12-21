@@ -23,7 +23,7 @@ public class HttpHeadersHandler extends ChannelInboundHandlerAdapter {
 
             request.setUri(urlBuilder.getPath().toString());
             HttpHeaders headers = request.headers();
-            String ip = headers.get("x-ip");
+            String ip = headers.get("X-Real-IP");
             if (StringUtils.isEmpty(ip)) {
                 InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
                 ip = address.getAddress().getHostAddress();
