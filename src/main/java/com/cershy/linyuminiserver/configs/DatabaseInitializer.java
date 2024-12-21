@@ -1,5 +1,6 @@
 package com.cershy.linyuminiserver.configs;
 
+import com.cershy.linyuminiserver.service.GroupService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,9 @@ public class DatabaseInitializer {
 
     @Value("${spring.datasource.url}")
     private String datasourceUrl;
+
+    @Resource
+    private GroupService groupService;
 
     @PostConstruct
     public void init() {
@@ -77,6 +81,8 @@ public class DatabaseInitializer {
                     jdbcTemplate.execute(sql.trim());
                 }
             }
+            //更新默认群组
+            groupService.updateDefaultGroup();
         } catch (Exception e) {
             throw new RuntimeException("Failed to execute SQL file: " + resourcePath, e);
         }

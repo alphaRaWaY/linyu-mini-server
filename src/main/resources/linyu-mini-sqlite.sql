@@ -4,8 +4,18 @@ CREATE TABLE IF NOT EXISTS "user"
 (
     "id"          TEXT    NOT NULL,
     "name"        TEXT    NOT NULL,
-    "portrait"    TEXT DEFAULT NULL,
+    "avatar"      TEXT DEFAULT NULL,
     "email"       TEXT DEFAULT NULL,
+    "create_time" INTEGER NOT NULL,
+    "update_time" INTEGER NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE IF NOT EXISTS "group"
+(
+    "id"          TEXT    NOT NULL,
+    "name"        TEXT    NOT NULL,
+    "avatar"      TEXT DEFAULT NULL,
     "create_time" INTEGER NOT NULL,
     "update_time" INTEGER NOT NULL,
     PRIMARY KEY ("id")
@@ -16,6 +26,7 @@ CREATE TABLE IF NOT EXISTS "chat_list"
     "id"           TEXT    NOT NULL,
     "user_id"      TEXT    NOT NULL,
     "target_id"    TEXT    NOT NULL,
+    "target_info"  TEXT    NOT NULL,
     "unread_count" INTEGER DEFAULT 0,
     "last_message" TEXT    DEFAULT NULL,
     "type"         TEXT    DEFAULT NULL,
