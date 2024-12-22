@@ -2,6 +2,8 @@ package com.cershy.linyuminiserver.controller;
 
 import cn.hutool.json.JSONObject;
 import com.cershy.linyuminiserver.annotation.UrlFree;
+import com.cershy.linyuminiserver.annotation.UrlLimit;
+import com.cershy.linyuminiserver.constant.LimitKeyType;
 import com.cershy.linyuminiserver.service.LoginService;
 import com.cershy.linyuminiserver.utils.ResultUtil;
 import com.cershy.linyuminiserver.utils.SecurityUtil;
@@ -21,6 +23,7 @@ public class LoginController {
 
     @UrlFree
     @PostMapping("/verify")
+    @UrlLimit(keyType = LimitKeyType.IP)
     public Object verify(@RequestBody @Valid VerifyVo verifyVo) {
         String result = loginService.verify(verifyVo.getPassword());
         return ResultUtil.Succeed(result);
@@ -28,6 +31,7 @@ public class LoginController {
 
     @UrlFree
     @GetMapping("/public-key")
+    @UrlLimit(keyType = LimitKeyType.IP)
     public Object getPublicKey() {
         String result = SecurityUtil.getPublicKey();
         return ResultUtil.Succeed(result);
@@ -35,6 +39,7 @@ public class LoginController {
 
     @UrlFree
     @PostMapping("")
+    @UrlLimit(keyType = LimitKeyType.IP)
     public Object login(@RequestBody @Valid LoginVo loginVo) {
         JSONObject result = loginService.login(loginVo);
         return ResultUtil.Succeed(result);

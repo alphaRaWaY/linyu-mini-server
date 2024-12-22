@@ -1,5 +1,6 @@
 package com.cershy.linyuminiserver.controller;
 
+import com.cershy.linyuminiserver.annotation.UrlLimit;
 import com.cershy.linyuminiserver.annotation.UserIp;
 import com.cershy.linyuminiserver.annotation.Userid;
 import com.cershy.linyuminiserver.entity.Message;
@@ -23,6 +24,7 @@ public class MessageController {
     @Resource
     MessageService messageService;
 
+    @UrlLimit(maxRequests = 100)
     @PostMapping("/send")
     public Object send(@Userid String userId, @UserIp String userIp,
                        @RequestBody @Valid SendMessageVo sendMessageVo) {
@@ -31,6 +33,7 @@ public class MessageController {
         return ResultUtil.Succeed(result);
     }
 
+    @UrlLimit
     @PostMapping("/record")
     public Object record(@Userid String userId, @RequestBody @Valid RecordVo recordVo) {
         List<Message> result = messageService.record(userId, recordVo);

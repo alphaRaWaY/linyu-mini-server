@@ -1,5 +1,6 @@
 package com.cershy.linyuminiserver.controller;
 
+import com.cershy.linyuminiserver.annotation.UrlLimit;
 import com.cershy.linyuminiserver.dto.UserDto;
 import com.cershy.linyuminiserver.entity.User;
 import com.cershy.linyuminiserver.service.UserService;
@@ -25,18 +26,21 @@ public class UserController {
         return ResultUtil.Succeed(result);
     }
 
+    @UrlLimit
     @GetMapping("/list")
     public Object listUser() {
         List<UserDto> result = userService.listUser();
         return ResultUtil.Succeed(result);
     }
 
+    @UrlLimit
     @GetMapping("/list/map")
     public Object listMapUser() {
         Map<String, UserDto> result = userService.listMapUser();
         return ResultUtil.Succeed(result);
     }
 
+    @UrlLimit
     @GetMapping("/online/web")
     public Object onlineWeb() {
         List<String> result = userService.onlineWeb();

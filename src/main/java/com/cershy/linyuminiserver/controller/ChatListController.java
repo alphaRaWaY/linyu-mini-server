@@ -1,5 +1,6 @@
 package com.cershy.linyuminiserver.controller;
 
+import com.cershy.linyuminiserver.annotation.UrlLimit;
 import com.cershy.linyuminiserver.annotation.Userid;
 import com.cershy.linyuminiserver.entity.ChatList;
 import com.cershy.linyuminiserver.service.ChatListService;
@@ -18,18 +19,21 @@ public class ChatListController {
     @Resource
     ChatListService chatListService;
 
+    @UrlLimit
     @GetMapping("/list/private")
     public Object privateList(@Userid String userId) {
         List<ChatList> result = chatListService.privateList(userId);
         return ResultUtil.Succeed(result);
     }
 
+    @UrlLimit
     @GetMapping("/group")
     public Object group(@Userid String userId) {
         ChatList result = chatListService.getGroup(userId);
         return ResultUtil.Succeed(result);
     }
 
+    @UrlLimit
     @PostMapping("/create")
     public Object create(@Userid String userId, @RequestBody @Valid CreateVo createVo) {
         ChatList result = chatListService.create(userId, createVo.getTargetId());
