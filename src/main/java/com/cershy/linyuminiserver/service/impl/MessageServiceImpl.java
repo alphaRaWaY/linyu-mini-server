@@ -5,8 +5,10 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cershy.linyuminiserver.constant.MessageSource;
+import com.cershy.linyuminiserver.constant.MessageType;
 import com.cershy.linyuminiserver.dto.UserDto;
 import com.cershy.linyuminiserver.entity.Message;
+import com.cershy.linyuminiserver.exception.LinyuException;
 import com.cershy.linyuminiserver.mapper.MessageMapper;
 import com.cershy.linyuminiserver.service.ChatListService;
 import com.cershy.linyuminiserver.service.MessageService;
@@ -14,6 +16,7 @@ import com.cershy.linyuminiserver.service.UserService;
 import com.cershy.linyuminiserver.service.WebSocketService;
 import com.cershy.linyuminiserver.utils.CacheUtil;
 import com.cershy.linyuminiserver.utils.IpUtil;
+import com.cershy.linyuminiserver.vo.message.RecallVo;
 import com.cershy.linyuminiserver.vo.message.RecordVo;
 import com.cershy.linyuminiserver.vo.message.SendMessageVo;
 import org.springframework.stereotype.Service;
@@ -57,8 +60,36 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
         return messages;
     }
 
+    @Override
+    public Message recall(String userId, RecallVo recallVo) {
+        Message message = getById(recallVo.getMsgId());
+        if (null == message) {
+            throw new LinyuException("消息不存在~");
+        }
+        if (!message.getFromId().equals(userId)) {
+            throw new LinyuException("仅能撤回自己的消息~");
+        }
+
+        if (DateUtil.between(message.getCreateTime(), new Date(), DateUnit.MINUTE) > 2) {
+            throw new LinyuException("消息已超过2分钟，无法撤回~");
+        }
+        //撤回自己的消息
+        message.setType(MessageType.Recall);
+        message.setMessage("");
+        updateById(message);
+        if (MessageSource.Group.equals(message.getSource())) {
+            chatListService.updateChatListGroup(message);
+            webSocketService.sendMsgToGroup(message);
+        } else {
+            chatListService.updateChatListPrivate(userId, message.getToId(), message);
+            webSocketService.sendMsgToUser(message, userId, message.getToId());
+        }
+        return message;
+    }
+
     public Message sendMessageToGroup(String userId, SendMessageVo sendMessageVo) {
-        Message message = sendMessage(userId, "1", sendMessageVo, MessageSource.Group, "text");
+        Message message = sendMessage(userId, "1", sendMessageVo,
+                MessageSource.Group, MessageType.Text);
         //更新群聊列表
         chatListService.updateChatListGroup(message);
         webSocketService.sendMsgToGroup(message);
@@ -66,7 +97,8 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     }
 
     public Message sendMessageToUser(String userId, SendMessageVo sendMessageVo) {
-        Message message = sendMessage(userId, sendMessageVo.getTargetId(), sendMessageVo, MessageSource.User, "text");
+        Message message = sendMessage(userId, sendMessageVo.getTargetId(),
+                sendMessageVo, MessageSource.User, MessageType.Text);
         //更新私聊列表
         chatListService.updateChatListPrivate(userId, sendMessageVo.getTargetId(), message);
         webSocketService.sendMsgToUser(message, userId, sendMessageVo.getTargetId());

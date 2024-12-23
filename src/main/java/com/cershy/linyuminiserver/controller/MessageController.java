@@ -6,6 +6,7 @@ import com.cershy.linyuminiserver.annotation.Userid;
 import com.cershy.linyuminiserver.entity.Message;
 import com.cershy.linyuminiserver.service.MessageService;
 import com.cershy.linyuminiserver.utils.ResultUtil;
+import com.cershy.linyuminiserver.vo.message.RecallVo;
 import com.cershy.linyuminiserver.vo.message.RecordVo;
 import com.cershy.linyuminiserver.vo.message.SendMessageVo;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,6 +38,13 @@ public class MessageController {
     @PostMapping("/record")
     public Object record(@Userid String userId, @RequestBody @Valid RecordVo recordVo) {
         List<Message> result = messageService.record(userId, recordVo);
+        return ResultUtil.Succeed(result);
+    }
+
+    @UrlLimit
+    @PostMapping("/recall")
+    public Object recall(@Userid String userId, @RequestBody @Valid RecallVo recallVo) {
+        Message result = messageService.recall(userId, recallVo);
         return ResultUtil.Succeed(result);
     }
 }

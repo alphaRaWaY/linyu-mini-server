@@ -50,6 +50,18 @@ public class Message {
     private String message;
 
     /**
+     * 引用的消息信息
+     */
+    @TableField(value = "reference_msg", typeHandler = JacksonTypeHandler.class)
+    private Message referenceMsg;
+
+    /**
+     * at的用户信息
+     */
+    @TableField(value = "at_user", typeHandler = JacksonTypeHandler.class)
+    private UserDto userDto;
+
+    /**
      * 是否显示时间（布尔值）
      */
     @TableField("is_show_time")
