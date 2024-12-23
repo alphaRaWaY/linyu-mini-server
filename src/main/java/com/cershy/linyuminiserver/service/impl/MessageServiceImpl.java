@@ -12,6 +12,7 @@ import com.cershy.linyuminiserver.service.ChatListService;
 import com.cershy.linyuminiserver.service.MessageService;
 import com.cershy.linyuminiserver.service.UserService;
 import com.cershy.linyuminiserver.service.WebSocketService;
+import com.cershy.linyuminiserver.utils.CacheUtil;
 import com.cershy.linyuminiserver.utils.IpUtil;
 import com.cershy.linyuminiserver.vo.message.RecordVo;
 import com.cershy.linyuminiserver.vo.message.SendMessageVo;
@@ -36,6 +37,9 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     @Resource
     WebSocketService webSocketService;
 
+    @Resource
+    CacheUtil cacheUtil;
+
     @Override
     public Message send(String userId, SendMessageVo sendMessageVo) {
         if (MessageSource.Group.equals(sendMessageVo.getSource())) {
@@ -49,6 +53,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     public List<Message> record(String userId, RecordVo recordVo) {
         List<Message> messages = messageMapper.record(userId, recordVo.getTargetId(),
                 recordVo.getIndex(), recordVo.getNum());
+        cacheUtil.putUserReadCache(userId, recordVo.getTargetId());
         return messages;
     }
 

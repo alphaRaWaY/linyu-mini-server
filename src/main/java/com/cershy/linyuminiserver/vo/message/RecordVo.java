@@ -2,6 +2,8 @@ package com.cershy.linyuminiserver.vo.message;
 
 import lombok.Data;
 
+import javax.validation.constraints.Max;
+
 @Data
 public class RecordVo {
     //目标id
@@ -9,5 +11,6 @@ public class RecordVo {
     //起始
     private int index;
     //查询条数
+    @Max(100)
     private int num;
 }

@@ -14,6 +14,7 @@ import com.cershy.linyuminiserver.mapper.ChatListMapper;
 import com.cershy.linyuminiserver.service.ChatListService;
 import com.cershy.linyuminiserver.service.GroupService;
 import com.cershy.linyuminiserver.service.UserService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -23,6 +24,7 @@ import java.util.List;
 public class ChatListServiceImpl extends ServiceImpl<ChatListMapper, ChatList> implements ChatListService {
 
     @Resource
+    @Lazy
     UserService userService;
 
     @Resource
@@ -59,9 +61,10 @@ public class ChatListServiceImpl extends ServiceImpl<ChatListMapper, ChatList> i
         return chat;
     }
 
-    public ChatList getTargetChatList(String targetId) {
+    public ChatList getTargetChatList(String userId, String targetId) {
         LambdaQueryWrapper<ChatList> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(ChatList::getTargetId, targetId)
+                .eq(ChatList::getUserId, userId)
                 .eq(ChatList::getType, ChatListType.User);
         return getOne(queryWrapper);
     }
@@ -70,7 +73,7 @@ public class ChatListServiceImpl extends ServiceImpl<ChatListMapper, ChatList> i
     public ChatList create(String userId, String targetId) {
         if (userId.equals(targetId))
             return null;
-        ChatList targetChatList = getTargetChatList(targetId);
+        ChatList targetChatList = getTargetChatList(userId, targetId);
         if (targetChatList != null) {
             return targetChatList;
         }
@@ -118,7 +121,17 @@ public class ChatListServiceImpl extends ServiceImpl<ChatListMapper, ChatList> i
         }
         //更新自己的聊天列表
         LambdaUpdateWrapper<ChatList> updateWrapper = new LambdaUpdateWrapper();
-        updateWrapper.set(ChatList::getLastMessage, message)
+        updateWrapper.set(ChatList::getLastMessage, JSONUtil.toJsonStr(message))
+                .eq(ChatList::getUserId, userId)
+                .eq(ChatList::getTargetId, targetId);
+        return update(updateWrapper);
+    }
+
+    @Override
+    public boolean read(String userId, String targetId) {
+        if (targetId == null) return false;
+        LambdaUpdateWrapper<ChatList> updateWrapper = new LambdaUpdateWrapper();
+        updateWrapper.set(ChatList::getUnreadCount, 0)
                 .eq(ChatList::getUserId, userId)
                 .eq(ChatList::getTargetId, targetId);
         return update(new ChatList(), updateWrapper);

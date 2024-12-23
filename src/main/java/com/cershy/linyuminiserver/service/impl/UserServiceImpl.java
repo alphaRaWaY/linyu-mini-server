@@ -9,8 +9,10 @@ import com.cershy.linyuminiserver.dto.NotifyDto;
 import com.cershy.linyuminiserver.dto.UserDto;
 import com.cershy.linyuminiserver.entity.User;
 import com.cershy.linyuminiserver.mapper.UserMapper;
+import com.cershy.linyuminiserver.service.ChatListService;
 import com.cershy.linyuminiserver.service.UserService;
 import com.cershy.linyuminiserver.service.WebSocketService;
+import com.cershy.linyuminiserver.utils.CacheUtil;
 import com.cershy.linyuminiserver.vo.user.CreateUserVo;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Resource
     WebSocketService webSocketService;
+
+    @Resource
+    CacheUtil cacheUtil;
+
+    @Resource
+    ChatListService chatListService;
 
     @Override
     public boolean isExist(String name, String email) {
@@ -89,6 +97,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         notifyDto.setTime(new Date());
         notifyDto.setType(NotifyType.Web_Offline);
         notifyDto.setContent(JSONUtil.toJsonStr(getUserById(userId)));
+        //离线更新，已读列表（防止用户直接关闭浏览器等情况）
+        chatListService.read(userId, cacheUtil.getUserReadCache(userId));
         webSocketService.sendNotifyToGroup(notifyDto);
     }
 }

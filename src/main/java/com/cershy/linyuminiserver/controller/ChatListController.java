@@ -6,6 +6,7 @@ import com.cershy.linyuminiserver.entity.ChatList;
 import com.cershy.linyuminiserver.service.ChatListService;
 import com.cershy.linyuminiserver.utils.ResultUtil;
 import com.cershy.linyuminiserver.vo.chatList.CreateVo;
+import com.cershy.linyuminiserver.vo.chatList.ReadVo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -37,6 +38,13 @@ public class ChatListController {
     @PostMapping("/create")
     public Object create(@Userid String userId, @RequestBody @Valid CreateVo createVo) {
         ChatList result = chatListService.create(userId, createVo.getTargetId());
+        return ResultUtil.Succeed(result);
+    }
+
+    @UrlLimit
+    @PostMapping("/read")
+    public Object read(@Userid String userId, @RequestBody @Valid ReadVo readVo) {
+        boolean result = chatListService.read(userId, readVo.getTargetId());
         return ResultUtil.Succeed(result);
     }
 }
