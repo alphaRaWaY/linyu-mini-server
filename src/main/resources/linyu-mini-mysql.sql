@@ -35,16 +35,18 @@ CREATE TABLE IF NOT EXISTS `chat_list`
 
 CREATE TABLE IF NOT EXISTS `message`
 (
-    `id`           VARCHAR(255) NOT NULL,
-    `from_id`      VARCHAR(255) NOT NULL,
-    `to_id`        VARCHAR(255) NOT NULL,
-    `from_info`    TEXT         NOT NULL,
-    `message`      TEXT         DEFAULT NULL,
-    `is_show_time` TINYINT(1) DEFAULT 0,
-    `type`         VARCHAR(255) DEFAULT NULL,
-    `source`       VARCHAR(255) DEFAULT NULL,
-    `create_time`  timestamp(3) NOT NULL,
-    `update_time`  timestamp(3) NOT NULL,
+    `id`            VARCHAR(255) NOT NULL,
+    `from_id`       VARCHAR(255) NOT NULL,
+    `to_id`         VARCHAR(255) NOT NULL,
+    `from_info`     TEXT         NOT NULL,
+    `message`       TEXT         DEFAULT NULL,
+    `reference_msg` TEXT         DEFAULT NULL,
+    `at_user`       TEXT         DEFAULT NULL,
+    `is_show_time`  TINYINT(1) DEFAULT 0,
+    `type`          VARCHAR(255) DEFAULT NULL,
+    `source`        VARCHAR(255) DEFAULT NULL,
+    `create_time`   timestamp(3) NOT NULL,
+    `update_time`   timestamp(3) NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `idx_message_from_id_to_id` (`from_id`, `to_id`)
+    INDEX           `idx_message_from_id_to_id` (`from_id`, `to_id`)
 );
