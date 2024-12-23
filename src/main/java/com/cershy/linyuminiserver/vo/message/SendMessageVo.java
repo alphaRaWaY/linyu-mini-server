@@ -11,5 +11,6 @@ public class SendMessageVo {
     private String source;
     @NotNull(message = "消息内容不能为空~")
     private String msgContent;
+    private String referenceMsgId;
     private String userIp;
 }

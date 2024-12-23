@@ -3,6 +3,7 @@ package com.cershy.linyuminiserver.service.impl;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cershy.linyuminiserver.constant.MessageSource;
 import com.cershy.linyuminiserver.constant.MessageType;
@@ -88,7 +89,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     }
 
     public Message sendMessageToGroup(String userId, SendMessageVo sendMessageVo) {
-        Message message = sendMessage(userId, "1", sendMessageVo,
+        Message message = sendMessage(userId, sendMessageVo,
                 MessageSource.Group, MessageType.Text);
         //更新群聊列表
         chatListService.updateChatListGroup(message);
@@ -97,23 +98,23 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     }
 
     public Message sendMessageToUser(String userId, SendMessageVo sendMessageVo) {
-        Message message = sendMessage(userId, sendMessageVo.getTargetId(),
-                sendMessageVo, MessageSource.User, MessageType.Text);
+        Message message = sendMessage(userId, sendMessageVo,
+                MessageSource.User, MessageType.Text);
         //更新私聊列表
         chatListService.updateChatListPrivate(userId, sendMessageVo.getTargetId(), message);
         webSocketService.sendMsgToUser(message, userId, sendMessageVo.getTargetId());
         return message;
     }
 
-    public Message sendMessage(String userId, String targetId, SendMessageVo sendMessageVo, String source, String type) {
+    public Message sendMessage(String userId, SendMessageVo sendMessageVo, String source, String type) {
         //获取上一条显示时间的消息
-        Message previousMessage = messageMapper.getPreviousShowTimeMsg(userId, targetId);
+        Message previousMessage = messageMapper.getPreviousShowTimeMsg(userId, sendMessageVo.getTargetId());
         //存入数据库
         Message message = new Message();
         message.setId(IdUtil.randomUUID());
         message.setFromId(userId);
         message.setSource(source);
-        message.setToId(targetId);
+        message.setToId(sendMessageVo.getTargetId());
         message.setMessage(sendMessageVo.getMsgContent());
         message.setType(type);
         UserDto user = userService.getUserById(userId);
@@ -123,6 +124,11 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
             message.setIsShowTime(true);
         } else {
             message.setIsShowTime(DateUtil.between(new Date(), previousMessage.getUpdateTime(), DateUnit.MINUTE) > 5);
+        }
+        if (StrUtil.isNotBlank(sendMessageVo.getReferenceMsgId())) {
+            Message referenceMessage = getById(sendMessageVo.getReferenceMsgId());
+            referenceMessage.setReferenceMsg(null);
+            message.setReferenceMsg(referenceMessage);
         }
         if (save(message)) {
             return message;
