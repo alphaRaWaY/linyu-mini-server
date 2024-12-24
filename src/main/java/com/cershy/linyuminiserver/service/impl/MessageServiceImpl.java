@@ -89,8 +89,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     }
 
     public Message sendMessageToGroup(String userId, SendMessageVo sendMessageVo) {
-        Message message = sendMessage(userId, sendMessageVo,
-                MessageSource.Group, MessageType.Text);
+        Message message = sendMessage(userId, sendMessageVo, MessageSource.Group);
         //更新群聊列表
         chatListService.updateChatListGroup(message);
         webSocketService.sendMsgToGroup(message);
@@ -98,15 +97,14 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     }
 
     public Message sendMessageToUser(String userId, SendMessageVo sendMessageVo) {
-        Message message = sendMessage(userId, sendMessageVo,
-                MessageSource.User, MessageType.Text);
+        Message message = sendMessage(userId, sendMessageVo, MessageSource.User);
         //更新私聊列表
         chatListService.updateChatListPrivate(userId, sendMessageVo.getTargetId(), message);
         webSocketService.sendMsgToUser(message, userId, sendMessageVo.getTargetId());
         return message;
     }
 
-    public Message sendMessage(String userId, SendMessageVo sendMessageVo, String source, String type) {
+    public Message sendMessage(String userId, SendMessageVo sendMessageVo, String source) {
         //获取上一条显示时间的消息
         Message previousMessage = messageMapper.getPreviousShowTimeMsg(userId, sendMessageVo.getTargetId());
         //存入数据库
@@ -116,7 +114,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
         message.setSource(source);
         message.setToId(sendMessageVo.getTargetId());
         message.setMessage(sendMessageVo.getMsgContent());
-        message.setType(type);
+        message.setType(sendMessageVo.getType());
         UserDto user = userService.getUserById(userId);
         user.setIpOwnership(IpUtil.getIpRegion(sendMessageVo.getUserIp()));
         message.setFromInfo(user);
