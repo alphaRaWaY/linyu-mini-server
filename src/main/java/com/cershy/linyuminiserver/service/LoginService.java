@@ -24,10 +24,19 @@ public class LoginService {
     @Value("${linyu.password}")
     private String linyuPassword;
 
+    @Value("${linyu.limit}")
+    private int linyuLimit;
+
     @Resource
     CacheUtil cacheUtil;
 
+    @Resource
+    WebSocketService webSocketService;
+
     public String verify(String password) {
+        if (webSocketService.getOnlineNum() >= linyuLimit) {
+            throw new LinyuException("聊天室人数已满，请稍后再试~");
+        }
         String decryptedPassword = SecurityUtil.decryptPassword(password);
         if (!linyuPassword.equals(decryptedPassword)) {
             throw new LinyuException("密码错误~");
@@ -38,6 +47,9 @@ public class LoginService {
     }
 
     public JSONObject login(LoginVo loginVo) {
+        if (webSocketService.getOnlineNum() >= linyuLimit) {
+            throw new LinyuException("聊天室人数已满，请稍后再试~");
+        }
         User user = userService.getUserByNameOrEmail(loginVo.getName(), loginVo.getEmail());
         if (user != null) {
             if (loginVo.getName().equals(user.getName()) &&

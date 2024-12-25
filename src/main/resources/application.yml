@@ -9,10 +9,10 @@ spring:
     username:
     password:
   #mysql配置
-#      driver-class-name: com.mysql.cj.jdbc.Driver
-#      url: jdbc:mysql://127.0.0.1:3306/linyu-mini?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-#      username: root
-#      password: 123456
+  #      driver-class-name: com.mysql.cj.jdbc.Driver
+  #      url: jdbc:mysql://127.0.0.1:3306/linyu-mini?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+  #      username: root
+  #      password: 123456
   hikari:
     minimum-idle: 3
     maximum-pool-size: 10
