@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  linyu-mini-web:
+    image: linyu-mini-web:1.0
+    container_name: linyu-mini-web
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /linyu/nginx/ssl:/etc/nginx/ssl
+      - /linyu/nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - linyu-mini-server
+
+
+  linyu-mini-server:
+    image: linyu-mini-server:1.0
+    container_name: linyu-mini-server
+    volumes:
+      - /linyu/data:/linyu/data
+      - /linyu/logs:/linyu/logs
+    ports:
+      - "9100:9100"
+      - "9200:9200"
+    environment:
+      SQLITE_FILE_PATH: ${SQLITE_FILE_PATH}
+      LINYU_LOG_PATH: ${LINYU_LOG_PATH}
+      LINYU_PASSWORD: ${LINYU_PASSWORD}
+      LINYU_LIMIT: ${LINYU_LIMIT}
+      LINYU_NAME: ${LINYU_NAME}
