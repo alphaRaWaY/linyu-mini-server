@@ -9,7 +9,8 @@ public class ResultUtil {
         SUCCEED(0),
         FAIL(1),
         TOKEN_INVALID(-1), //token失效
-        FORBIDDEN(-2); //没有权限
+        FORBIDDEN(-2),//没有权限
+        LOGIN_ELSEWHERE(-3); //其他地方登录
 
 
         private int type;
@@ -154,7 +155,7 @@ public class ResultUtil {
     }
 
     /**
-     * 失败有返回消息和返回数据
+     * token失效
      *
      * @return
      */
@@ -166,7 +167,7 @@ public class ResultUtil {
     }
 
     /**
-     * 失败有返回消息和返回数据
+     * 没有权限
      *
      * @return
      */
@@ -174,6 +175,18 @@ public class ResultUtil {
         JSONObject result = new JSONObject();
         result.put(CODE, ResponseEnum.FORBIDDEN.getType());
         result.put(MSG, "该用户没有权限~");
+        return result;
+    }
+
+    /**
+     * 其他地方登录
+     *
+     * @return
+     */
+    public static JSONObject LoginElsewhere() {
+        JSONObject result = new JSONObject();
+        result.put(CODE, ResponseEnum.LOGIN_ELSEWHERE.getType());
+        result.put(MSG, "已在其它地方登录,请重新登录~");
         return result;
     }
 }

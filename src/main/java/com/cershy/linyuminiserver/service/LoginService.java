@@ -4,6 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONObject;
 import com.cershy.linyuminiserver.entity.User;
 import com.cershy.linyuminiserver.exception.LinyuException;
+import com.cershy.linyuminiserver.utils.CacheUtil;
 import com.cershy.linyuminiserver.utils.JwtUtil;
 import com.cershy.linyuminiserver.utils.SecurityUtil;
 import com.cershy.linyuminiserver.vo.login.LoginVo;
@@ -22,6 +23,9 @@ public class LoginService {
 
     @Value("${linyu.password}")
     private String linyuPassword;
+
+    @Resource
+    CacheUtil cacheUtil;
 
     public String verify(String password) {
         String decryptedPassword = SecurityUtil.decryptPassword(password);
@@ -55,7 +59,9 @@ public class LoginService {
         userinfo.put("type", "user");
         userinfo.put("userId", user.getId());
         userinfo.put("userName", user.getName());
-        userinfo.put("token", JwtUtil.createToken(userinfo));
+        String token = JwtUtil.createToken(userinfo);
+        userinfo.put("token", token);
+        cacheUtil.putUserSessionCache(user.getId(), token);
         return userinfo;
     }
 }

@@ -5,6 +5,7 @@ import cn.hutool.json.JSONUtil;
 import com.cershy.linyuminiserver.constant.WsContentType;
 import com.cershy.linyuminiserver.dto.NotifyDto;
 import com.cershy.linyuminiserver.entity.Message;
+import com.cershy.linyuminiserver.utils.CacheUtil;
 import com.cershy.linyuminiserver.utils.JwtUtil;
 import com.cershy.linyuminiserver.utils.ResultUtil;
 import io.jsonwebtoken.Claims;
@@ -32,6 +33,9 @@ public class WebSocketService {
     @Lazy
     UserService userService;
 
+    @Resource
+    CacheUtil cacheUtil;
+
     public static final ConcurrentHashMap<String, Channel> Online_User = new ConcurrentHashMap<>();
     public static final ConcurrentHashMap<Channel, String> Online_Channel = new ConcurrentHashMap<>();
 
@@ -39,6 +43,12 @@ public class WebSocketService {
         try {
             Claims claims = JwtUtil.parseToken(token);
             String userId = (String) claims.get("userId");
+            String cacheToken = cacheUtil.getUserSessionCache(userId);
+            if (!token.equals(cacheToken)) {
+                sendMsg(channel, ResultUtil.Fail("已在其他地方登录"), WsContentType.Msg);
+                channel.close();
+                return;
+            }
             Online_User.put(userId, channel);
             Online_Channel.put(channel, userId);
             userService.online(userId);

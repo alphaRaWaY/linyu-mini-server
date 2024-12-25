@@ -1,7 +1,7 @@
 package com.cershy.linyuminiserver.filter;
 
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.cershy.linyuminiserver.utils.CacheUtil;
 import com.cershy.linyuminiserver.utils.JwtUtil;
 import com.cershy.linyuminiserver.utils.ResultUtil;
 import com.cershy.linyuminiserver.utils.UrlPermitUtil;
@@ -32,6 +32,9 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
     @Resource
     private UrlPermitUtil urlPermitUtil;
 
+    @Resource
+    CacheUtil cacheUtil;
+
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
 
@@ -45,9 +48,19 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
         if (!urlPermitUtil.isPermitUrl(url)) {
             try {
                 Claims claims = JwtUtil.parseToken(token);
+                //验证是否在其他地方登录
+                String userId = claims.get("userId").toString();
+                String cacheToken = cacheUtil.getUserSessionCache(userId);
+                if (StrUtil.isBlank(cacheToken)) {
+                    tokenInvalid(httpServletResponse, ResultUtil.TokenInvalid().toJSONString(0));
+                    return;
+                } else if (!cacheToken.equals(token)) {
+                    tokenInvalid(httpServletResponse, ResultUtil.LoginElsewhere().toJSONString(0));
+                    return;
+                }
                 setUserInfo(claims, url, httpServletRequest, httpServletResponse);
             } catch (Exception e) {
-                tokenInvalid(httpServletResponse);
+                tokenInvalid(httpServletResponse, ResultUtil.TokenInvalid().toJSONString(0));
                 return;
             }
         } else {
@@ -62,12 +75,12 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
-    public void tokenInvalid(HttpServletResponse httpServletResponse) {
+    public void tokenInvalid(HttpServletResponse httpServletResponse, String msg) {
         try {
             httpServletResponse.setContentType("application/json;charset=UTF-8");
-            httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            httpServletResponse.setStatus(HttpServletResponse.SC_OK);
             PrintWriter out = httpServletResponse.getWriter();
-            out.write(ResultUtil.Forbidden().toJSONString(0));
+            out.write(msg);
             out.flush();
             out.close();
         } catch (Exception e) {
@@ -83,7 +96,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
         //验证角色是否有权限
         String role = (String) map.get("role");
         if (!urlPermitUtil.isRoleUrl(role, url)) {
-            tokenInvalid(httpServletResponse);
+            tokenInvalid(httpServletResponse, ResultUtil.Forbidden().toJSONString(0));
             return;
         }
         httpServletRequest.setAttribute("userinfo", map);

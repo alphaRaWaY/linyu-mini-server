@@ -10,11 +10,24 @@ import java.util.concurrent.TimeUnit;
 public class CacheUtil {
     //记录用户最后一次查询记录的用户Id
     private final Cache<String, String> userReadMsgCache;
+    //用户登录信息<用户名，token>
+    private final Cache<String, String> userSessionCache;
 
     public CacheUtil() {
         this.userReadMsgCache = Caffeine.newBuilder()
                 .expireAfterWrite(12, TimeUnit.HOURS)
                 .build();
+        this.userSessionCache = Caffeine.newBuilder()
+                .expireAfterWrite(12, TimeUnit.HOURS)
+                .build();
+    }
+
+    public void putUserSessionCache(String username, String token) {
+        userSessionCache.put(username, token);
+    }
+
+    public String getUserSessionCache(String username) {
+        return userSessionCache.getIfPresent(username); //返回null表示缓存中没有该值
     }
 
     public void putUserReadCache(String userId, String targetId) {
