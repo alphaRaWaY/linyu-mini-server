@@ -4,11 +4,13 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -37,6 +39,12 @@ public class User {
      */
     @TableField("email")
     private String email;
+
+    /**
+     * 徽章
+     */
+    @TableField(value = "badge", typeHandler = JacksonTypeHandler.class)
+    private List<String> badge;
 
     /**
      * 登录时间

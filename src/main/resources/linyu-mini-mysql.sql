@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS `user`
     `name`        VARCHAR(255) NOT NULL,
     `avatar`      TEXT         DEFAULT NULL,
     `email`       VARCHAR(255) DEFAULT NULL,
+    `badge`       TEXT         DEFAULT NULL,
     `login_time`  timestamp(3) DEFAULT NULL,
     `create_time` timestamp(3) NOT NULL,
     `update_time` timestamp(3) NOT NULL,

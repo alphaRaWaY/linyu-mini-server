@@ -78,6 +78,8 @@ public class LoginService {
         String token = JwtUtil.createToken(userinfo);
         userinfo.put("token", token);
         cacheUtil.putUserSessionCache(user.getId(), token);
+        //更新用户徽章
+        userService.updateUserBadge(user.getId());
         return userinfo;
     }
 }

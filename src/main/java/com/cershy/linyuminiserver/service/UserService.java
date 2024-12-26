@@ -29,4 +29,6 @@ public interface UserService extends IService<User> {
     void offline(String userId);
 
     void deleteExpiredUsers(LocalDate expirationDate);
+
+    void updateUserBadge(String id);
 }

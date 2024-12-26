@@ -1,9 +1,12 @@
 package com.cershy.linyuminiserver.service.impl;
 
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cershy.linyuminiserver.constant.BadgeType;
 import com.cershy.linyuminiserver.constant.NotifyType;
 import com.cershy.linyuminiserver.dto.NotifyDto;
 import com.cershy.linyuminiserver.dto.UserDto;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -111,6 +115,45 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         queryWrapper.lt(User::getLoginTime, expirationDate);
         if (remove(queryWrapper)) {
             log.info("---清理过期用户成功---");
+        }
+    }
+
+    @Override
+    public void updateUserBadge(String id) {
+        User user = getById(id);
+        if (user == null) return;
+        List<String> badges = user.getBadge();
+        if (badges == null) {
+            badges = new ArrayList<>();
+        }
+        boolean isUpdate = false;
+        // 是否是第一个用户
+        if (count() == 1) {
+            if (!badges.contains(BadgeType.Crown)) {
+                badges.add(BadgeType.Crown);
+                isUpdate = true;
+            }
+        }
+        // 根据用户创建时间发放徽章
+        long diffInDays = DateUtil.between(user.getCreateTime(), new Date(), DateUnit.DAY);
+        if (diffInDays >= 0 && diffInDays <= 7) {
+            if (!badges.contains(BadgeType.Clover)) {
+                badges.add(BadgeType.Clover);
+                isUpdate = true;
+            }
+        } else if (diffInDays > 7) {
+            if (badges.contains(BadgeType.Clover)) {
+                badges.remove(BadgeType.Clover);
+                isUpdate = true;
+            }
+            if (!badges.contains(BadgeType.Diamond)) {
+                badges.add(BadgeType.Diamond);
+                isUpdate = true;
+            }
+        }
+        if (isUpdate) {
+            user.setBadge(badges);
+            updateById(user);
         }
     }
 }
