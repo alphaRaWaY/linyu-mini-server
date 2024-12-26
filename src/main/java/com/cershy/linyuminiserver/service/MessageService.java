@@ -6,6 +6,7 @@ import com.cershy.linyuminiserver.vo.message.RecallVo;
 import com.cershy.linyuminiserver.vo.message.RecordVo;
 import com.cershy.linyuminiserver.vo.message.SendMessageVo;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface MessageService extends IService<Message> {
@@ -14,4 +15,6 @@ public interface MessageService extends IService<Message> {
     List<Message> record(String userId, RecordVo recordVo);
 
     Message recall(String userId, RecallVo recallVo);
+
+    void deleteExpiredMessages(LocalDate expirationDate);
 }

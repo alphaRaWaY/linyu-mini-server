@@ -39,6 +39,12 @@ public class User {
     private String email;
 
     /**
+     * 登录时间
+     */
+    @TableField(value = "login_time")
+    private Date loginTime;
+
+    /**
      * 创建时间
      */
     @TableField(value = "create_time", fill = FieldFill.INSERT)

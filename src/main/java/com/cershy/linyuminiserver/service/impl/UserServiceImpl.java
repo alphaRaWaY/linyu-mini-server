@@ -14,14 +14,17 @@ import com.cershy.linyuminiserver.service.UserService;
 import com.cershy.linyuminiserver.service.WebSocketService;
 import com.cershy.linyuminiserver.utils.CacheUtil;
 import com.cershy.linyuminiserver.vo.user.CreateUserVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     @Resource
@@ -100,5 +103,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //离线更新，已读列表（防止用户直接关闭浏览器等情况）
         chatListService.read(userId, cacheUtil.getUserReadCache(userId));
         webSocketService.sendNotifyToGroup(notifyDto);
+    }
+
+    @Override
+    public void deleteExpiredUsers(LocalDate expirationDate) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.lt(User::getLoginTime, expirationDate);
+        if (remove(queryWrapper)) {
+            log.info("---清理过期用户成功---");
+        }
     }
 }

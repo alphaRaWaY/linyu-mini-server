@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cershy.linyuminiserver.constant.MessageSource;
 import com.cershy.linyuminiserver.constant.MessageType;
@@ -20,13 +21,16 @@ import com.cershy.linyuminiserver.utils.IpUtil;
 import com.cershy.linyuminiserver.vo.message.RecallVo;
 import com.cershy.linyuminiserver.vo.message.RecordVo;
 import com.cershy.linyuminiserver.vo.message.SendMessageVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
 @Service
+@Slf4j
 public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> implements MessageService {
 
     @Resource
@@ -86,6 +90,15 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
             webSocketService.sendMsgToUser(message, userId, message.getToId());
         }
         return message;
+    }
+
+    @Override
+    public void deleteExpiredMessages(LocalDate expirationDate) {
+        LambdaQueryWrapper<Message> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.lt(Message::getCreateTime, expirationDate);
+        if (remove(queryWrapper)) {
+            log.info("---清理过期消息成功---");
+        }
     }
 
     public Message sendMessageToGroup(String userId, SendMessageVo sendMessageVo) {

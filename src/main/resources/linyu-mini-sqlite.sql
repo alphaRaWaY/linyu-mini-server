@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS "user"
     "name"        TEXT    NOT NULL,
     "avatar"      TEXT DEFAULT NULL,
     "email"       TEXT DEFAULT NULL,
+    "login_time"  INTEGER NOT NULL,
     "create_time" INTEGER NOT NULL,
     "update_time" INTEGER NOT NULL,
     PRIMARY KEY ("id")

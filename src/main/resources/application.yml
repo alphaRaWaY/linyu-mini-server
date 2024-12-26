@@ -37,3 +37,4 @@ linyu:
   password: sun55@kong #群聊密码
   limit: 100 #在线人数限制
   name: Linyu在线聊天室 #群聊名称
+  expires: 7 #数据过期时间（天）

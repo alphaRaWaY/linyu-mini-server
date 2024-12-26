@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,11 +61,14 @@ public class LoginService {
                     loginVo.getEmail().equals(user.getEmail())) {
                 throw new LinyuException("邮箱已被使用~");
             }
+            user.setLoginTime(new Date());
+            userService.updateById(user);
         } else {
             user = new User();
             user.setId(IdUtil.simpleUUID());
             user.setName(loginVo.getName());
             user.setEmail(loginVo.getEmail());
+            user.setLoginTime(new Date());
             userService.save(user);
         }
         JSONObject userinfo = new JSONObject();

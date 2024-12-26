@@ -25,15 +25,8 @@ logging:
   file:
     name: ${LINYU_LOG_PATH}
 
-mybatis:
-  table:
-    auto: update
-
-mybatis-plus:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-
 linyu:
   password: ${LINYU_PASSWORD} #群聊密码
   limit: ${LINYU_LIMIT} #在线人数限制
   name: ${LINYU_NAME} #群聊名称
+  expires: ${LINYU_EXPIRES} #数据过期时间（天）

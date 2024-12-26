@@ -5,6 +5,7 @@ import com.cershy.linyuminiserver.dto.UserDto;
 import com.cershy.linyuminiserver.entity.User;
 import com.cershy.linyuminiserver.vo.user.CreateUserVo;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -26,4 +27,6 @@ public interface UserService extends IService<User> {
     void online(String userId);
 
     void offline(String userId);
+
+    void deleteExpiredUsers(LocalDate expirationDate);
 }
