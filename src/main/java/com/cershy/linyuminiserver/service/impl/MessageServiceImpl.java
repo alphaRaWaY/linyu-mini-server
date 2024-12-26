@@ -21,6 +21,7 @@ import com.cershy.linyuminiserver.utils.IpUtil;
 import com.cershy.linyuminiserver.vo.message.RecallVo;
 import com.cershy.linyuminiserver.vo.message.RecordVo;
 import com.cershy.linyuminiserver.vo.message.SendMessageVo;
+import com.github.houbb.sensitive.word.bs.SensitiveWordBs;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +48,9 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
 
     @Resource
     CacheUtil cacheUtil;
+
+    @Resource
+    SensitiveWordBs sensitiveWordBs;
 
     @Override
     public Message send(String userId, SendMessageVo sendMessageVo) {
@@ -126,7 +130,12 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
         message.setFromId(userId);
         message.setSource(source);
         message.setToId(sendMessageVo.getTargetId());
-        message.setMessage(sendMessageVo.getMsgContent());
+        if (MessageType.Text.equals(sendMessageVo.getType())) {
+            // 敏感词替换
+            message.setMessage(sensitiveWordBs.replace(sendMessageVo.getMsgContent()));
+        } else {
+            message.setMessage(sendMessageVo.getMsgContent());
+        }
         message.setType(sendMessageVo.getType());
         UserDto user = userService.getUserById(userId);
         user.setIpOwnership(IpUtil.getIpRegion(sendMessageVo.getUserIp()));
