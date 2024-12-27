@@ -2,10 +2,10 @@ package com.cershy.linyuminiserver.vo.chatList;
 
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Data
 public class CreateVo {
-    @NotNull(message = "目标不能为空~")
+    @NotBlank(message = "目标不能为空~")
     private String targetId;
 }

@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("user")
+@TableName(value = "user", autoResultMap = true)
 public class User {
     private static final long serialVersionUID = 1L;
 

@@ -2,10 +2,10 @@ package com.cershy.linyuminiserver.vo.login;
 
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Data
 public class VerifyVo {
-    @NotNull(message = "密码不能为空~")
+    @NotBlank(message = "密码不能为空~")
     private String password;
 }

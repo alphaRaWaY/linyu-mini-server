@@ -2,10 +2,10 @@ package com.cershy.linyuminiserver.vo.message;
 
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Data
 public class RecallVo {
-    @NotNull(message = "消息不能为空~")
+    @NotBlank(message = "消息不能为空~")
     private String msgId;
 }
