@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cershy.linyuminiserver.constant.MessageSource;
@@ -21,6 +22,7 @@ import com.cershy.linyuminiserver.utils.IpUtil;
 import com.cershy.linyuminiserver.vo.message.RecallVo;
 import com.cershy.linyuminiserver.vo.message.RecordVo;
 import com.cershy.linyuminiserver.vo.message.SendMessageVo;
+import com.cershy.linyuminiserver.vo.message.TextMessageContent;
 import com.github.houbb.sensitive.word.bs.SensitiveWordBs;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -132,7 +134,14 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
         message.setToId(sendMessageVo.getTargetId());
         if (MessageType.Text.equals(sendMessageVo.getType())) {
             // 敏感词替换
-            message.setMessage(sensitiveWordBs.replace(sendMessageVo.getMsgContent()));
+            List<TextMessageContent> contents = JSONUtil.toList(sendMessageVo.getMsgContent(), TextMessageContent.class);
+            contents.forEach(content -> {
+                if (content.getType().equals("text")) {
+                    content.setContent(sensitiveWordBs.replace(content.getContent()));
+                }
+            });
+            message.setMessage(JSONUtil.toJsonStr(contents));
+
         } else {
             message.setMessage(sendMessageVo.getMsgContent());
         }
