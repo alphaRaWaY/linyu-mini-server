@@ -4,15 +4,15 @@ server:
 spring:
   datasource:
     #sqlite
-    url: jdbc:sqlite:${SQLITE_FILE_PATH} #数据库文件路径（修改成实际路径）
-    driver-class-name: org.sqlite.JDBC
-    username:
-    password:
-  #mysql配置
-  #      driver-class-name: com.mysql.cj.jdbc.Driver
-  #      url: jdbc:mysql://127.0.0.1:3306/linyu-mini?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-  #      username: root
-  #      password: 123456
+    #    url: jdbc:sqlite:${SQLITE_FILE_PATH} #数据库文件路径（修改成实际路径）
+    #    driver-class-name: org.sqlite.JDBC
+    #    username:
+    #    password:
+    #mysql配置
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
   hikari:
     minimum-idle: 3
     maximum-pool-size: 10
@@ -30,3 +30,8 @@ linyu:
   limit: ${LINYU_LIMIT} #在线人数限制
   name: ${LINYU_NAME} #群聊名称
   expires: ${LINYU_EXPIRES} #数据过期时间（天）
+  doubao: #豆包
+    api-key: ${LINYU_DOUBAO_API_KEY}
+    count-limit: ${LINYU_DOUBAO_COUNT_LIMIT} #次数限制,0-不限制
+    length-limit: ${LINYU_DOUBAO_LENGTH_LIMIT} #内容长度限制,0-不限制
+    model: ${LINYU_DOUBAO_MODEL}

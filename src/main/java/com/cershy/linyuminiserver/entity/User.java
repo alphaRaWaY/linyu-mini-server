@@ -28,6 +28,14 @@ public class User {
     @TableField("name")
     private String name;
 
+
+    /**
+     * 用户类型
+     */
+    @TableField("type")
+    private String type;
+
+
     /**
      * 头像
      */

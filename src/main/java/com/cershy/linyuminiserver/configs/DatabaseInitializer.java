@@ -1,6 +1,7 @@
 package com.cershy.linyuminiserver.configs;
 
 import com.cershy.linyuminiserver.service.GroupService;
+import com.cershy.linyuminiserver.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,9 @@ public class DatabaseInitializer {
 
     @Resource
     private GroupService groupService;
+
+    @Resource
+    private UserService userService;
 
     @PostConstruct
     public void init() {
@@ -83,6 +87,8 @@ public class DatabaseInitializer {
             }
             //更新默认群组
             groupService.updateDefaultGroup();
+            //创建机器人
+            userService.initBotUser();
         } catch (Exception e) {
             throw new RuntimeException("Failed to execute SQL file: " + resourcePath, e);
         }

@@ -17,4 +17,6 @@ public interface MessageService extends IService<Message> {
     Message recall(String userId, RecallVo recallVo);
 
     void deleteExpiredMessages(LocalDate expirationDate);
+
+    Message sendMessageToGroup(String userId, SendMessageVo sendMessageVo);
 }

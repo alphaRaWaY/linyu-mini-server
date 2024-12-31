@@ -2,6 +2,7 @@ package com.cershy.linyuminiserver.service;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONObject;
+import com.cershy.linyuminiserver.constant.UserType;
 import com.cershy.linyuminiserver.entity.User;
 import com.cershy.linyuminiserver.exception.LinyuException;
 import com.cershy.linyuminiserver.utils.CacheUtil;
@@ -69,6 +70,7 @@ public class LoginService {
             user.setName(loginVo.getName());
             user.setEmail(loginVo.getEmail());
             user.setLoginTime(new Date());
+            user.setType(UserType.User);
             userService.save(user);
         }
         JSONObject userinfo = new JSONObject();

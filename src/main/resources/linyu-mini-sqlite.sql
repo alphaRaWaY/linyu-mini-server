@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS "user"
 (
     "id"          TEXT    NOT NULL,
     "name"        TEXT    NOT NULL,
+    "type"        TEXT DEFAULT NULL,
     "avatar"      TEXT DEFAULT NULL,
     "email"       TEXT DEFAULT NULL,
     "badge"       TEXT DEFAULT NULL,

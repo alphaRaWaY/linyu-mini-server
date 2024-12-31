@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cershy.linyuminiserver.constant.BadgeType;
 import com.cershy.linyuminiserver.constant.NotifyType;
+import com.cershy.linyuminiserver.constant.UserType;
 import com.cershy.linyuminiserver.dto.NotifyDto;
 import com.cershy.linyuminiserver.dto.UserDto;
 import com.cershy.linyuminiserver.entity.User;
@@ -154,6 +155,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (isUpdate) {
             user.setBadge(badges);
             updateById(user);
+        }
+    }
+
+    @Override
+    public void initBotUser() {
+        User doubao = getById("doubao");
+        if (doubao == null) {
+            User robot = new User();
+            robot.setId("doubao");
+            robot.setName("豆包");
+            robot.setEmail(IdUtil.simpleUUID() + "@robot.com");
+            robot.setType(UserType.Bot);
+            save(robot);
         }
     }
 }

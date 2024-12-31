@@ -1,5 +1,18 @@
 version: '3.8'
 services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - /linyu/mysql:/var/lib/mysql
+
   linyu-mini-web:
     image: linyu-mini-web:1.0
     container_name: linyu-mini-web
@@ -22,6 +35,8 @@ services:
     ports:
       - "9100:9100"
       - "9200:9200"
+    depends_on:
+      - mysql
     environment:
       SQLITE_FILE_PATH: ${SQLITE_FILE_PATH}
       LINYU_LOG_PATH: ${LINYU_LOG_PATH}
@@ -29,3 +44,10 @@ services:
       LINYU_LIMIT: ${LINYU_LIMIT}
       LINYU_NAME: ${LINYU_NAME}
       LINYU_EXPIRES: ${LINYU_EXPIRES}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      LINYU_DOUBAO_API_KEY: ${LINYU_DOUBAO_API_KEY}
+      LINYU_DOUBAO_COUNT_LIMIT: ${LINYU_DOUBAO_COUNT_LIMIT}
+      LINYU_DOUBAO_LENGTH_LIMIT: ${LINYU_DOUBAO_LENGTH_LIMIT}
+      LINYU_DOUBAO_MODEL: ${LINYU_DOUBAO_MODEL}

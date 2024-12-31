@@ -87,9 +87,12 @@ public class IpUtil {
                         if ("内网IP".equals(splitIpInfo[4])) {
                             return "内网";
                         } else {
-                            return "";
+                            return "未知";
                         }
                     } else {
+                        if ("0".equals(splitIpInfo[0])) {
+                            return "未知";
+                        }
                         return splitIpInfo[0];
                     }
                 }
@@ -97,9 +100,9 @@ public class IpUtil {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return "";
+            return "未知";
         } else {
-            throw new IllegalArgumentException("非法的IP地址");
+            return ip;
         }
 
     }

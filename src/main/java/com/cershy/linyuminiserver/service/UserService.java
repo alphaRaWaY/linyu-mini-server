@@ -31,4 +31,6 @@ public interface UserService extends IService<User> {
     void deleteExpiredUsers(LocalDate expirationDate);
 
     void updateUserBadge(String id);
+
+    void initBotUser();
 }

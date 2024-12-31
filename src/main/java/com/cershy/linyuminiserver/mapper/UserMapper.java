@@ -16,11 +16,11 @@ public interface UserMapper extends BaseMapper<User> {
     @ResultMap("UserDtoResultMap")
     UserDto getUserById(String userId);
 
-    @Select("SELECT * FROM user")
+    @Select("SELECT * FROM user ORDER BY type DESC")
     @ResultMap("UserDtoResultMap")
     List<UserDto> listUser();
 
-    @Select("SELECT * FROM user")
+    @Select("SELECT * FROM user ORDER BY type DESC")
     @MapKey("id")
     @ResultMap("UserDtoResultMap")
     Map<String, UserDto> listMapUser();

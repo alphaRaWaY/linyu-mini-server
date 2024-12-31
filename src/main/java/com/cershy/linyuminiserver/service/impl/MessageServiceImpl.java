@@ -9,14 +9,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cershy.linyuminiserver.constant.MessageSource;
 import com.cershy.linyuminiserver.constant.MessageType;
+import com.cershy.linyuminiserver.constant.TextContentType;
+import com.cershy.linyuminiserver.constant.UserType;
 import com.cershy.linyuminiserver.dto.UserDto;
 import com.cershy.linyuminiserver.entity.Message;
 import com.cershy.linyuminiserver.exception.LinyuException;
 import com.cershy.linyuminiserver.mapper.MessageMapper;
-import com.cershy.linyuminiserver.service.ChatListService;
-import com.cershy.linyuminiserver.service.MessageService;
-import com.cershy.linyuminiserver.service.UserService;
-import com.cershy.linyuminiserver.service.WebSocketService;
+import com.cershy.linyuminiserver.service.*;
 import com.cershy.linyuminiserver.utils.CacheUtil;
 import com.cershy.linyuminiserver.utils.IpUtil;
 import com.cershy.linyuminiserver.vo.message.RecallVo;
@@ -31,6 +30,7 @@ import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @Slf4j
@@ -53,6 +53,9 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
 
     @Resource
     SensitiveWordBs sensitiveWordBs;
+
+    @Resource
+    AiChatService aiChatService;
 
     @Override
     public Message send(String userId, SendMessageVo sendMessageVo) {
@@ -107,6 +110,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
         }
     }
 
+    @Override
     public Message sendMessageToGroup(String userId, SendMessageVo sendMessageVo) {
         Message message = sendMessage(userId, sendMessageVo, MessageSource.Group);
         //更新群聊列表
@@ -132,16 +136,23 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
         message.setFromId(userId);
         message.setSource(source);
         message.setToId(sendMessageVo.getTargetId());
+        StringBuffer sb = new StringBuffer();
+        AtomicReference<UserDto> botUserRef = new AtomicReference<>(null);
         if (MessageType.Text.equals(sendMessageVo.getType())) {
             // 敏感词替换
             List<TextMessageContent> contents = JSONUtil.toList(sendMessageVo.getMsgContent(), TextMessageContent.class);
             contents.forEach(content -> {
-                if (content.getType().equals("text")) {
+                if (TextContentType.Text.equals(content.getType())) {
                     content.setContent(sensitiveWordBs.replace(content.getContent()));
+                    sb.append(content.getContent());
+                } else {
+                    UserDto userDto = JSONUtil.toBean(content.getContent(), UserDto.class);
+                    if (UserType.Bot.equals(userDto.getType())) {
+                        botUserRef.set(JSONUtil.toBean(content.getContent(), UserDto.class));
+                    }
                 }
             });
             message.setMessage(JSONUtil.toJsonStr(contents));
-
         } else {
             message.setMessage(sendMessageVo.getMsgContent());
         }
@@ -160,8 +171,14 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
             message.setReferenceMsg(referenceMessage);
         }
         if (save(message)) {
+            // @机器人回复
+            UserDto botUser = botUserRef.get();
+            if (botUser != null) {
+                aiChatService.sendBotReply(userId, sendMessageVo.getTargetId(), botUser, sb.toString());
+            }
             return message;
         }
         return null;
     }
+
 }
