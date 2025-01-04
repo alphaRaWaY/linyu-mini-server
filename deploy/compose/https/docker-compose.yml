@@ -18,12 +18,16 @@ services:
     container_name: linyu-mini-web
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - /linyu/nginx/ssl:/etc/nginx/ssl
+      - /linyu/nginx/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - linyu-mini-server
     environment:
       SERVER_NAME: ${SERVER_NAME}
-      SERVER_HTTP_URL: http://${SERVER_NAME}
-      SERVER_WS_URL: ws://${SERVER_NAME}
+      SERVER_HTTP_URL: https://${SERVER_NAME}
+      SERVER_WS_URL: wss://${SERVER_NAME}
 
   linyu-mini-server:
     image: henam/linyu-mini-server:latest
