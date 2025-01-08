@@ -8,4 +8,6 @@ public class WsContentType {
     public static final String Msg = "msg";
     //通知
     public static final String Notify = "notify";
+    //视频/音频
+    public static String Video = "video";
 }

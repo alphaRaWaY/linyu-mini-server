@@ -97,8 +97,7 @@ public class ChatListServiceImpl extends ServiceImpl<ChatListMapper, ChatList> i
         return update(updateWrapper);
     }
 
-    @Override
-    public boolean updateChatListPrivate(String userId, String targetId, Message message) {
+    public boolean updateChatList(String userId, String targetId, Message message) {
         //判断聊天列表是否存在
         LambdaQueryWrapper<ChatList> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(ChatList::getUserId, targetId)
@@ -113,18 +112,19 @@ public class ChatListServiceImpl extends ServiceImpl<ChatListMapper, ChatList> i
             chatList.setUnreadCount(1);
             chatList.setTargetInfo(userService.getUserById(userId));
             chatList.setLastMessage(message);
-            save(chatList);
+            return save(chatList);
         } else {
             chatList.setUnreadCount(chatList.getUnreadCount() + 1);
             chatList.setLastMessage(message);
-            updateById(chatList);
+            return updateById(chatList);
         }
+    }
+
+    @Override
+    public boolean updateChatListPrivate(String userId, String targetId, Message message) {
+        updateChatList(targetId, userId, message);
         //更新自己的聊天列表
-        LambdaUpdateWrapper<ChatList> updateWrapper = new LambdaUpdateWrapper();
-        updateWrapper.set(ChatList::getLastMessage, JSONUtil.toJsonStr(message))
-                .eq(ChatList::getUserId, userId)
-                .eq(ChatList::getTargetId, targetId);
-        return update(updateWrapper);
+        return updateChatList(userId, targetId, message);
     }
 
     @Override
