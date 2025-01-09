@@ -10,4 +10,6 @@ public class WsContentType {
     public static final String Notify = "notify";
     //视频/音频
     public static String Video = "video";
+    //文件
+    public static String File = "file";
 }

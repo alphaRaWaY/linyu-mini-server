@@ -112,4 +112,11 @@ public class WebSocketService {
             sendMsg(channel, msg, WsContentType.Video);
         }
     }
+
+    public void sendFileToUser(Object msg, String userId) {
+        Channel channel = Online_User.get(userId);
+        if (channel != null) {
+            sendMsg(channel, msg, WsContentType.File);
+        }
+    }
 }
