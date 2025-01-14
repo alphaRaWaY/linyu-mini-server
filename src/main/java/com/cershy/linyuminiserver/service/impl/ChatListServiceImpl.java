@@ -136,4 +136,9 @@ public class ChatListServiceImpl extends ServiceImpl<ChatListMapper, ChatList> i
                 .eq(ChatList::getTargetId, targetId);
         return update(new ChatList(), updateWrapper);
     }
+
+    @Override
+    public boolean delete(String userId, String chatListId) {
+        return removeById(chatListId);
+    }
 }

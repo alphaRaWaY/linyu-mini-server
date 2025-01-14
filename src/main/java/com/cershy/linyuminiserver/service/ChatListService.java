@@ -18,4 +18,6 @@ public interface ChatListService extends IService<ChatList> {
     boolean updateChatListPrivate(String userId, String targetId, Message message);
 
     boolean read(String userId, String targetId);
+
+    boolean delete(String userId, String chatListId);
 }

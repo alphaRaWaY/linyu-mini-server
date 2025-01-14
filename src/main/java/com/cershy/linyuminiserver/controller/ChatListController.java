@@ -6,6 +6,7 @@ import com.cershy.linyuminiserver.entity.ChatList;
 import com.cershy.linyuminiserver.service.ChatListService;
 import com.cershy.linyuminiserver.utils.ResultUtil;
 import com.cershy.linyuminiserver.vo.chatList.CreateVo;
+import com.cershy.linyuminiserver.vo.chatList.DeleteVo;
 import com.cershy.linyuminiserver.vo.chatList.ReadVo;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +46,13 @@ public class ChatListController {
     @PostMapping("/read")
     public Object read(@Userid String userId, @RequestBody @Valid ReadVo readVo) {
         boolean result = chatListService.read(userId, readVo.getTargetId());
+        return ResultUtil.Succeed(result);
+    }
+
+    @UrlLimit
+    @PostMapping("/delete")
+    public Object delete(@Userid String userId, @RequestBody @Valid DeleteVo deleteVo) {
+        boolean result = chatListService.delete(userId, deleteVo.getChatListId());
         return ResultUtil.Succeed(result);
     }
 }
