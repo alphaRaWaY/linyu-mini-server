@@ -12,12 +12,14 @@ import com.cershy.linyuminiserver.constant.UserType;
 import com.cershy.linyuminiserver.dto.NotifyDto;
 import com.cershy.linyuminiserver.dto.UserDto;
 import com.cershy.linyuminiserver.entity.User;
+import com.cershy.linyuminiserver.exception.LinyuException;
 import com.cershy.linyuminiserver.mapper.UserMapper;
 import com.cershy.linyuminiserver.service.ChatListService;
 import com.cershy.linyuminiserver.service.UserService;
 import com.cershy.linyuminiserver.service.WebSocketService;
 import com.cershy.linyuminiserver.utils.CacheUtil;
 import com.cershy.linyuminiserver.vo.user.CreateUserVo;
+import com.cershy.linyuminiserver.vo.user.UpdateUserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +59,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getName, name)
                 .or().eq(User::getEmail, email);
+        return getOne(queryWrapper);
+    }
+
+    @Override
+    public User getUserByName(String name) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getName, name);
         return getOne(queryWrapper);
     }
 
@@ -169,5 +178,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             robot.setType(UserType.Bot);
             save(robot);
         }
+    }
+
+    @Override
+    public boolean updateUser(String userid, UpdateUserVo updateUserVo) {
+        User user = getUserByName(updateUserVo.getName());
+        if (user != null) {
+            if (!user.getId().equals(userid))
+                throw new LinyuException("用户名已被使用~");
+        } else {
+            user = getById(userid);
+        }
+        user.setName(updateUserVo.getName());
+        user.setAvatar(updateUserVo.getAvatar());
+        return updateById(user);
     }
 }

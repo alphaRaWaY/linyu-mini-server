@@ -6,7 +6,7 @@ import com.cershy.linyuminiserver.utils.JwtUtil;
 import com.cershy.linyuminiserver.utils.ResultUtil;
 import com.cershy.linyuminiserver.utils.UrlPermitUtil;
 import io.jsonwebtoken.Claims;
-import jdk.nashorn.internal.runtime.logging.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -24,7 +24,7 @@ import java.util.Map;
  * @author: dwh
  **/
 @Component
-@Logger
+@Slf4j
 public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
     private final String TokenName = "x-token";

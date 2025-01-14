@@ -77,6 +77,8 @@ public class LoginService {
         userinfo.put("type", "user");
         userinfo.put("userId", user.getId());
         userinfo.put("userName", user.getName());
+        userinfo.put("email", user.getEmail());
+        userinfo.put("avatar", user.getAvatar());
         String token = JwtUtil.createToken(userinfo);
         userinfo.put("token", token);
         cacheUtil.putUserSessionCache(user.getId(), token);

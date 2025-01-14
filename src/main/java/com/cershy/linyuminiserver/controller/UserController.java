@@ -1,11 +1,13 @@
 package com.cershy.linyuminiserver.controller;
 
 import com.cershy.linyuminiserver.annotation.UrlLimit;
+import com.cershy.linyuminiserver.annotation.Userid;
 import com.cershy.linyuminiserver.dto.UserDto;
 import com.cershy.linyuminiserver.entity.User;
 import com.cershy.linyuminiserver.service.UserService;
 import com.cershy.linyuminiserver.utils.ResultUtil;
 import com.cershy.linyuminiserver.vo.user.CreateUserVo;
+import com.cershy.linyuminiserver.vo.user.UpdateUserVo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -47,4 +49,10 @@ public class UserController {
         return ResultUtil.Succeed(result);
     }
 
+    @UrlLimit
+    @PostMapping("/update")
+    public Object updateUser(@Userid String userid, @RequestBody @Valid UpdateUserVo updateUserVo) {
+        boolean result = userService.updateUser(userid, updateUserVo);
+        return ResultUtil.ResultByFlag(result);
+    }
 }
