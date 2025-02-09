@@ -31,6 +31,9 @@ public class AiChatService {
     @Resource
     DoubaoAiService doubaoAiService;
 
+    @Resource
+    DeepSeekAiService deepSeekAiService;
+
     @Async("taskExecutor")
     public void sendBotReply(String userId, String targetId, UserDto botUser, String content) {
         UserDto user = userService.getUserById(userId);
@@ -41,7 +44,15 @@ public class AiChatService {
         JSONConfig config = new JSONConfig().setIgnoreNullValue(true);
         atUser.setContent(JSONUtil.toJsonStr(user, config));
         // 文本消息内容
-        String ask = doubaoAiService.ask(userId, content);
+        String ask = "请稍后尝试~";
+        switch (botUser.getId()) {
+            case "doubao":
+                ask = doubaoAiService.ask(userId, content);
+                break;
+            case "deepseek":
+                ask = deepSeekAiService.ask(userId, content);
+                break;
+        }
         TextMessageContent msgText = new TextMessageContent();
         msgText.setType(TextContentType.Text);
         msgText.setContent(ask);

@@ -43,3 +43,8 @@ linyu:
     count-limit: 5 #次数限制,0-不限制
     length-limit: 50 #内容长度限制,0-不限制
     model: ep-20241231132608-lbm7g
+  deep-seek: #deep seek
+    api-key: apikey
+    count-limit: 2 #次数限制,0-不限制
+    length-limit: 50 #内容长度限制,0-不限制
+    model: deepseek-chat

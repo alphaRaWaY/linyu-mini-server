@@ -169,11 +169,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public void initBotUser() {
+        //豆包机器人
         User doubao = getById("doubao");
         if (doubao == null) {
             User robot = new User();
             robot.setId("doubao");
             robot.setName("豆包");
+            robot.setEmail(IdUtil.simpleUUID() + "@robot.com");
+            robot.setType(UserType.Bot);
+            save(robot);
+        }
+        //deepseek机器人
+        User deepseek = getById("deepseek");
+        if (deepseek == null) {
+            User robot = new User();
+            robot.setId("deepseek");
+            robot.setName("DeepSeek");
             robot.setEmail(IdUtil.simpleUUID() + "@robot.com");
             robot.setType(UserType.Bot);
             save(robot);

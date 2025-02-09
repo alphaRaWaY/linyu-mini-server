@@ -14,6 +14,7 @@ public class LinyuConfig {
     private String name;
     private int expires;
     private AiConfig doubao;
+    private AiConfig deepSeek;
 
     @Data
     public static class AiConfig {

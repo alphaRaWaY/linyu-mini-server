@@ -35,3 +35,8 @@ linyu:
     count-limit: ${LINYU_DOUBAO_COUNT_LIMIT} #次数限制,0-不限制
     length-limit: ${LINYU_DOUBAO_LENGTH_LIMIT} #内容长度限制,0-不限制
     model: ${LINYU_DOUBAO_MODEL}
+  deep-seek: # deepseek
+    api-key: ${LINYU_DEEPSEEK_API_KEY}
+    count-limit: ${LINYU_DEEPSEEK_COUNT_LIMIT} #次数限制,0-不限制
+    length-limit: ${LINYU_DEEPSEEK_LENGTH_LIMIT} #内容长度限制,0-不限制
+    model: ${LINYU_DEEPSEEK_MODEL}
