@@ -88,7 +88,7 @@ public class DatabaseInitializer {
             //更新默认群组
             groupService.updateDefaultGroup();
             //创建机器人
-            userService.initBotUser();
+            //userService.initBotUser();
         } catch (Exception e) {
             throw new RuntimeException("Failed to execute SQL file: " + resourcePath, e);
         }
